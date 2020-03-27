@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">NotesReader</string>
+    <string name="dialog_title_save">Are you sure you want to save this Article?</string>
+    <string name="dialog_save">save</string>
+    <string name="dialog_cancel">cancel</string>
+    <string name="dialog_title_remove">Are you sure you want to remove this Article?</string>
+    <string name="dialog_title_read">Are you sure you want to mark as read this Article?</string>
+    <string name="dialog_yes">yes</string>
+    <string name="dialog_remove">remove</string>
+</resources>
