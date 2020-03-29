@@ -16,14 +16,23 @@ interface ArticleDao {
     @Delete
     suspend fun deleteArticle(article: Article): Unit
 
-    @Query("SELECT * FROM article_table ORDER BY date_saved DESC")
-    suspend fun getArticles(): List<Article>
+    @Delete
+    suspend fun deleteCategory(category: Category) : Unit
+
+    @Update
+    suspend fun updateCategory(category: Category) : Unit
 
     @Update
     suspend fun updateArticle(article: Article): Unit
 
+    @Query("SELECT * FROM article_table ORDER BY date_saved DESC")
+    suspend fun getArticles(): List<Article>
+
+    @Query("SELECT * FROM category_table")
+    suspend fun getCategories(): List<Category>
+
     @Transaction
     @Query("SELECT * FROM category_table")
-    suspend fun getAllCategoriesWithArticles() : List<Category>
+    suspend fun getAllCategoriesWithArticles() : List<CategoryWithArticles>
 
 }
