@@ -36,7 +36,7 @@ class MainViewModel(
                 Jsoup.connect(link).get()
             }
             val article =
-                Article(0, document.title(), link, false, Date(System.currentTimeMillis()))
+                Article(0, document.title(), link, false, Date(System.currentTimeMillis()), 0)
             articleData.value = article
         }
     }

@@ -19,4 +19,19 @@
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_category_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add"
+        app:rippleColor="@color/row_background"
+        android:elevation="6dp"
+        app:fabSize="normal"
+        android:clickable="true"
+        android:backgroundTint="@color/row_line_color"
+        app:borderWidth="0dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
