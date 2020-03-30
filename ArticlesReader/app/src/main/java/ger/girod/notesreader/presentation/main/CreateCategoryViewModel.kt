@@ -14,13 +14,11 @@ class CreateCategoryViewModel(private val saveCategoryUseCase: SaveCategoryUseCa
     var errorData : MutableLiveData<String> = MutableLiveData()
 
     fun saveCategory(category : Category) {
-
         viewModelScope.launch {
             when(val response = saveCategoryUseCase.saveCategory(category)) {
                 is ResultWrapper.Success -> saveCategoryData.postValue(response.value)
                 is ResultWrapper.Error -> errorData.postValue(response.exception.message)
             }
         }
-
     }
 }
