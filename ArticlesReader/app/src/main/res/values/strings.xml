@@ -7,4 +7,10 @@
     <string name="dialog_title_read">Are you sure you want to mark as read this Article?</string>
     <string name="dialog_yes">yes</string>
     <string name="dialog_remove">remove</string>
+    <string name="categories">Categories</string>
+    <string name="create_category">Create new category</string>
+    <string name="enter_category_title">Enter category title</string>
+    <string name="my_categories">My Categories</string>
+    <string name="edit_category">Edit category</string>
+    <string name="save_changes">SAVE CHANGES</string>
 </resources>

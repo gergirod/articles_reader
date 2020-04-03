@@ -1,4 +1,4 @@
-package ger.girod.notesreader.presentation.main
+package ger.girod.notesreader.presentation.article
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

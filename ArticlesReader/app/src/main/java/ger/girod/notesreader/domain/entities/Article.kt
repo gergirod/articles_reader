@@ -11,9 +11,10 @@ import java.util.*
 @Entity(tableName = "article_table")
 data class Article(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id") var id: Int,
+    @ColumnInfo(name = "article_id") var id: Long,
     @ColumnInfo(name = "title") var title: String,
     @ColumnInfo(name = "description") var description: String,
     @ColumnInfo(name = "is_read") var isRead: Boolean,
-    @ColumnInfo(name = "date_saved") var dateSaved: Date
+    @ColumnInfo(name = "date_saved") var dateSaved: Date,
+    @ColumnInfo(name = "category_id") var categoryId: Long
 )
