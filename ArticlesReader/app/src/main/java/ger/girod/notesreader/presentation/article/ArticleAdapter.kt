@@ -1,6 +1,5 @@
-package ger.girod.notesreader.presentation.main
+package ger.girod.notesreader.presentation.article
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

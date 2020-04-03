@@ -1,4 +1,4 @@
-package ger.girod.notesreader.presentation.main
+package ger.girod.notesreader.presentation.category
 
 import androidx.fragment.app.Fragment
 

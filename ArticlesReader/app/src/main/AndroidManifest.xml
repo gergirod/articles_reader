@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ger.girod.notesreader">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -11,9 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".NoteReaderApplication">
+        android:name=".NoteReaderApplication"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity android:name="ger.girod.notesreader.presentation.main.MainActivity"
-            android:theme="@style/AppCustomTheme">
+            android:theme="@style/AppCustomTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,6 +28,13 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity android:name=".presentation.category.CategoryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppCustomTheme"/>
+
+        <activity android:name=".presentation.category.EditCategoryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppCustomTheme"/>
     </application>
 
 </manifest>

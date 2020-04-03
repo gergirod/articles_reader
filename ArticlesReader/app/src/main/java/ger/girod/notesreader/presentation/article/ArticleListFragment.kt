@@ -1,8 +1,9 @@
-package ger.girod.notesreader.presentation.main
+package ger.girod.notesreader.presentation.article
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,24 +12,40 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.customListAdapter
+import com.afollestad.materialdialogs.list.listItems
+import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import ger.girod.notesreader.R
 import ger.girod.notesreader.data.database.AppDataBase
+import ger.girod.notesreader.data.model.CategoriesAndArticle
+import ger.girod.notesreader.data.providers.PreferencesManager
 import ger.girod.notesreader.domain.entities.Article
-import ger.girod.notesreader.domain.use_cases.DeleteArticleUseCaseImpl
-import ger.girod.notesreader.domain.use_cases.GetArticlesUseCaseImpl
-import ger.girod.notesreader.domain.use_cases.MarkArticleAsReadUseCaseImpl
-import ger.girod.notesreader.domain.use_cases.SaveArticleUseCaseImpl
+import ger.girod.notesreader.domain.entities.Category
+import ger.girod.notesreader.domain.use_cases.*
 import ger.girod.notesreader.presentation.MyViewModelFactory
+import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesBottomSheetAdapter
+import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesBottomSheetDialogFragment
+import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesSelectorAdapter
 import kotlinx.android.synthetic.main.main_fragment.*
 
-class MainFragment(var articleLink: String) : Fragment(), ArticleAdapter.RowClick {
+class ArticleListFragment(var articleLink: String) : Fragment(),
+    ArticleAdapter.RowClick {
 
     companion object {
-        fun newInstance(articleLink: String) = MainFragment(articleLink)
+        fun newInstance(articleLink: String) =
+            ArticleListFragment(articleLink)
     }
 
-    private lateinit var viewModel: MainViewModel
-    private val adapter: ArticleAdapter by lazy { ArticleAdapter(this) }
+    private val categorySelectorAdapter : CategoriesSelectorAdapter by lazy {
+        CategoriesSelectorAdapter()
+    }
+
+    private lateinit var viewModel: ArticleListFragmentViewModel
+    private val adapter: ArticleAdapter by lazy {
+        ArticleAdapter(
+            this
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,31 +57,37 @@ class MainFragment(var articleLink: String) : Fragment(), ArticleAdapter.RowClic
     private fun initViewModel() {
         val appDataBase = AppDataBase.getDatabaseInstance()
         viewModel = ViewModelProviders.of(this, MyViewModelFactory {
-            MainViewModel(
-                GetArticlesUseCaseImpl(
-                    appDataBase!!
-                ), SaveArticleUseCaseImpl(appDataBase),
+            ArticleListFragmentViewModel(
+                 SaveArticleUseCaseImpl(appDataBase!!),
                 MarkArticleAsReadUseCaseImpl(appDataBase),
-                DeleteArticleUseCaseImpl(appDataBase)
+                DeleteArticleUseCaseImpl(appDataBase),
+                GetCategoriesUseCaseImpl(appDataBase),
+                GetArticlesByCategoryUseCaseImpl(appDataBase),
+                GetCategoryUseCaseImpl(appDataBase)
             )
-        })[MainViewModel::class.java]
+        })[ArticleListFragmentViewModel::class.java]
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initViewModel()
         initList()
-        getArticles()
+        populateListAndTitle(PreferencesManager.getInstance()!!.getLastCategorySelectedId())
 
         if (articleLink.isNotEmpty()) viewModel.getArticleFromIntent(articleLink)
 
-        viewModel.articleData.observe(this, Observer { t ->
+        viewModel.categoriesAndArticleData.observe(this, Observer { t ->
             if (t != null) {
                 context?.let {
                     populateDialog(t)
                 }
 
             }
+        })
+
+        viewModel.errorData.observe(this, Observer {
+            //Todo show error message
+            Log.e("mirar aca ","mirar aca carajo $it")
         })
 
         viewModel.articlesData.observe(this, Observer { t ->
@@ -75,7 +98,7 @@ class MainFragment(var articleLink: String) : Fragment(), ArticleAdapter.RowClic
 
         viewModel.savedArticleData.observe(this, Observer { t ->
             if (t != null) {
-                getArticles()
+                getArticlesByCategoryId(PreferencesManager.getInstance()!!.getLastCategorySelectedId())
             }
         })
 
@@ -86,15 +109,32 @@ class MainFragment(var articleLink: String) : Fragment(), ArticleAdapter.RowClic
         viewModel.updateArticleData.observe(this, Observer { t ->
             adapter.onMarkAsRead(t)
         })
+
+        viewModel.categoryData.observe(this, Observer {
+            category_title.text = it.name
+        })
     }
 
-    private fun populateDialog(article: Article) {
 
+    fun populateListAndTitle(id : Long) {
+        populateTitle(id)
+        getArticlesByCategoryId(id)
+    }
+
+    fun populateTitle(id : Long) {
+        getCategory(id)
+    }
+    private fun populateDialog(categoriesAndArticle: CategoriesAndArticle) {
+        categorySelectorAdapter.setList(categoriesAndArticle.categories as ArrayList<Category>)
         MaterialDialog(context!!).show {
+            cancelOnTouchOutside(false)
             title(R.string.dialog_title_save)
-            message(null, article.title)
+            message(null, categoriesAndArticle.article.title)
+            //listItemsSingleChoice(items = myItems, initialSelection = 0)
+            customListAdapter(categorySelectorAdapter)
             positiveButton(R.string.dialog_save) {
-                viewModel.saveArticle(article)
+                categoriesAndArticle.article.categoryId = categorySelectorAdapter.getCategoryIdByPosition()
+                viewModel.saveArticle(categoriesAndArticle.article)
             }
             negativeButton(R.string.dialog_cancel) {
                 this.cancel()
@@ -102,8 +142,12 @@ class MainFragment(var articleLink: String) : Fragment(), ArticleAdapter.RowClic
         }
     }
 
-    private fun getArticles() {
-        viewModel.getAllArticles()
+    private fun getArticlesByCategoryId(categoryId : Long) {
+        viewModel.getArticlesByCategory(categoryId)
+    }
+
+    fun getCategory(categoryId: Long) {
+        viewModel.getCategoryById(categoryId)
     }
 
     private fun initList() {

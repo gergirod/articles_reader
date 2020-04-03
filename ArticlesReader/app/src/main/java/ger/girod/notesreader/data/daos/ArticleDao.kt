@@ -28,11 +28,20 @@ interface ArticleDao {
     @Query("SELECT * FROM article_table ORDER BY date_saved DESC")
     suspend fun getArticles(): List<Article>
 
+    @Query("SELECT * FROM article_table WHERE category_id = :categoryId ORDER BY date_saved DESC")
+    suspend fun getArticlesByCategoryId(categoryId : Long): List<Article>
+
     @Query("SELECT * FROM category_table")
     suspend fun getCategories(): List<Category>
 
     @Transaction
     @Query("SELECT * FROM category_table")
     suspend fun getAllCategoriesWithArticles() : List<CategoryWithArticles>
+
+    @Query("SELECT COUNT(*) FROM category_table")
+    suspend fun getCategoriesCount() : Int
+
+    @Query("SELECT * FROM category_table WHERE id = :categoryId")
+    suspend fun getCategory(categoryId: Long) : Category
 
 }
