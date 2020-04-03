@@ -51,7 +51,6 @@ class ArticleListFragmentViewModel(
 
     fun getCategoryById(categoryId: Long) {
         viewModelScope.launch {
-            Log.e("mirar aca ","mirar aca $categoryId")
             when(val response = getCategoryUseCase.getCategory(categoryId)) {
                 is ResultWrapper.Success -> categoryData.postValue(response.value)
                 is ResultWrapper.Error -> errorData.postValue(response.exception.message)
