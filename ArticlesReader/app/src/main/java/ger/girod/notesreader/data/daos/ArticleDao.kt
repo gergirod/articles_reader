@@ -11,7 +11,7 @@ interface ArticleDao {
     suspend fun saveArticle(article: Article): Unit
 
     @Insert
-    suspend fun saveCategory(category: Category) : Unit
+    suspend fun saveCategory(category: Category) : Long
 
     @Delete
     suspend fun deleteArticle(article: Article): Unit
@@ -43,5 +43,8 @@ interface ArticleDao {
 
     @Query("SELECT * FROM category_table WHERE id = :categoryId")
     suspend fun getCategory(categoryId: Long) : Category
+
+    @Query("SELECT * FROM category_table Limit 1")
+    suspend fun getRandomCategoryFromList() : Category
 
 }

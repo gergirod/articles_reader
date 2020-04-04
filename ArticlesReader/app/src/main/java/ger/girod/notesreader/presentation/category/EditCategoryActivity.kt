@@ -8,20 +8,18 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import ger.girod.notesreader.R
 import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.*
 import ger.girod.notesreader.presentation.MyViewModelFactory
-import kotlinx.android.synthetic.main.category_activity.*
 import kotlinx.android.synthetic.main.category_activity.category_name
 import kotlinx.android.synthetic.main.category_activity.toolbar
-import kotlinx.android.synthetic.main.category_bottom_sheet_row.*
 import kotlinx.android.synthetic.main.edit_category_activity.*
 
 const val CATEGORY_ID = "category_id"
+const val CATEGORY_DELETED = "category_deleted"
 class EditCategoryActivity : AppCompatActivity() {
 
     companion object {
@@ -48,11 +46,17 @@ class EditCategoryActivity : AppCompatActivity() {
             category_name.setText(category.name)
         })
 
+        editCategoryViewModel.deleteCategoryData.observe(this, Observer {
+            editCategoryViewModel.saveLatestCategory(it)
+            setResult(Activity.RESULT_OK, setResultIntent(it, true))
+            finish()
+        })
+
         edit_category.setOnClickListener {
             if(editCategoryViewModel.isChangeValid(category_name.text.toString())) {
                 category.name = category_name.text.toString()
                 editCategoryViewModel.updateCategory(category)
-                setResult(Activity.RESULT_OK, setResultIntent())
+                setResult(Activity.RESULT_OK, setResultIntent(category.id, false))
                 finish()
             }
         }
@@ -69,14 +73,15 @@ class EditCategoryActivity : AppCompatActivity() {
         val appDataBase = AppDataBase.getDatabaseInstance()
         editCategoryViewModel = ViewModelProviders.of(this, MyViewModelFactory{
             EditCategoryViewModel(DeleteCategoryUseCaseImpl(appDataBase!!), UpdateCategoryUseCaseImpl(appDataBase),
-                GetCategoryUseCaseImpl(appDataBase))
+                GetCategoryUseCaseImpl(appDataBase), GetRadomCategoryUseCaseImpl(appDataBase))
         })[EditCategoryViewModel::class.java]
 
     }
 
-    private fun setResultIntent() : Intent {
+    private fun setResultIntent(categoryId : Long, isCategoryDeleted : Boolean) : Intent {
         return Intent().apply {
-            putExtra(CATEGORY_ID, category.id)
+            putExtra(CATEGORY_ID, categoryId)
+            putExtra(CATEGORY_DELETED, isCategoryDeleted)
         }
     }
 
@@ -90,7 +95,6 @@ class EditCategoryActivity : AppCompatActivity() {
         when (item!!.itemId) {
             R.id.action_delete -> {
                 editCategoryViewModel.deleteCategory(category)
-                finish()
             }
             android.R.id.home -> {
                 onBackPressed()

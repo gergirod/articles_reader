@@ -15,6 +15,7 @@ import ger.girod.notesreader.R
 import ger.girod.notesreader.data.providers.PreferencesManager
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.presentation.article.ArticleListFragment
+import ger.girod.notesreader.presentation.category.CATEGORY_DELETED
 import ger.girod.notesreader.presentation.category.CATEGORY_ID
 import ger.girod.notesreader.presentation.category.CategoryActivity
 import ger.girod.notesreader.presentation.category.EditCategoryActivity
@@ -63,12 +64,16 @@ class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Li
 
         if(requestCode == CREATE_ACTIVITY_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK) {
-                //TODO show new empty cateogry once is created
+                articleListFragment.populateListAndTitle(data!!.getLongExtra(CATEGORY_ID, 0))
             }
         }else {
             if(resultCode == Activity.RESULT_OK) {
-                articleListFragment.populateTitle(data!!.getLongExtra(CATEGORY_ID, 0))
-                //TODO show user another category if its deleted
+                if(data!!.getBooleanExtra(CATEGORY_DELETED, false)) {
+                    articleListFragment.populateListAndTitle(data!!.getLongExtra(CATEGORY_ID, 0))
+
+                }else{
+                    articleListFragment.populateTitle(data!!.getLongExtra(CATEGORY_ID, 0))
+                }
             }
         }
 

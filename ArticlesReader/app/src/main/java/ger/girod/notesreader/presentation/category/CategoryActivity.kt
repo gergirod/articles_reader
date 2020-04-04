@@ -1,20 +1,21 @@
 package ger.girod.notesreader.presentation.category
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import ger.girod.notesreader.R
 import ger.girod.notesreader.data.database.AppDataBase
+import ger.girod.notesreader.data.providers.PreferencesManager
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.SaveCategoryUseCaseImpl
 import ger.girod.notesreader.presentation.MyViewModelFactory
 import kotlinx.android.synthetic.main.category_activity.*
-
 
 class CategoryActivity : AppCompatActivity() {
 
@@ -27,29 +28,16 @@ class CategoryActivity : AppCompatActivity() {
     private lateinit var createCategoryViewModel: CreateCategoryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        /*window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-
-        // Set the transition name, which matches Activity A’s start view transition name, on
-        // the root view.
-        this.findViewById<View>(android.R.id.content).transitionName = "shared_element_container"
-        // Attach a callback used to receive the shared elements from Activity A to be
-        // used by the container transform transition.
-        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-        // Set this Activity’s enter and return transition to a MaterialContainerTransform
-        window.sharedElementEnterTransition = MaterialContainerTransform(this).apply {
-            addTarget(android.R.id.content)
-            duration = 300L
-        }
-        window.sharedElementReturnTransition = MaterialContainerTransform(this).apply {
-            addTarget(android.R.id.content)
-            duration = 300L
-        }*/
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.category_activity)
 
         initViewModel()
+
+        createCategoryViewModel.saveCategoryData.observe(this, Observer {
+            createCategoryViewModel.saveLatestCategory(it)
+            setResult(Activity.RESULT_OK, setResultIntent(it))
+            finish()
+        })
 
         setSupportActionBar(toolbar)
         supportActionBar!!.apply {
@@ -71,6 +59,12 @@ class CategoryActivity : AppCompatActivity() {
         return Category(0, title, "")
     }
 
+    private fun setResultIntent(categoryId : Long) : Intent {
+        return Intent().apply {
+            putExtra(CATEGORY_ID, categoryId)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.category_menu, menu)
@@ -81,7 +75,6 @@ class CategoryActivity : AppCompatActivity() {
         when (item!!.itemId) {
             R.id.action_save -> {
                 createCategoryViewModel.saveCategory(createCategory(category_name.text.toString()))
-                finish()
             }
             android.R.id.home -> {
                 onBackPressed()
@@ -94,9 +87,6 @@ class CategoryActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
-    }
-
-    private fun setAnimation() {
     }
 
 }
