@@ -6,10 +6,11 @@ import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.exequteRequest
 import kotlinx.coroutines.Dispatchers
 
-class SaveCategoryUseCaseImpl(val appDataBase: AppDataBase) : SaveCategoryUseCase {
-    override suspend fun saveCategory(category: Category): ResultWrapper<Long> {
+class GetRadomCategoryUseCaseImpl(val appDataBase: AppDataBase) : GetRandomCategoryUseCase {
+
+    override suspend fun getRadomCategory(): ResultWrapper<Category> {
         return exequteRequest(Dispatchers.IO) {
-            appDataBase.articleDao().saveCategory(category)
+            appDataBase.articleDao().getRandomCategoryFromList()
         }
     }
 }

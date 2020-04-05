@@ -87,7 +87,6 @@ class ArticleListFragment(var articleLink: String) : Fragment(),
 
         viewModel.errorData.observe(this, Observer {
             //Todo show error message
-            Log.e("mirar aca ","mirar aca carajo $it")
         })
 
         viewModel.articlesData.observe(this, Observer { t ->
