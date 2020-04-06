@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class NoteReaderApplication : Application(), CoroutineScope {
+class ForLaterApplication : Application(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO
@@ -24,11 +24,10 @@ class NoteReaderApplication : Application(), CoroutineScope {
 
     private fun saveInitialCategory() {
         launch {
-
             val count = AppDataBase.getDatabaseInstance()!!.articleDao().getCategoriesCount()
             if (count == 0) {
                 AppDataBase.getDatabaseInstance()!!.articleDao().apply {
-                    saveCategory(Category(0, "Something", ""))
+                    saveCategory(Category(0, "Default Category", ""))
                 }
             }
         }
