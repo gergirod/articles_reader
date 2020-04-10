@@ -1,6 +1,9 @@
 # articles_reader
 
-<img src=https://github.com/gergirod/for_later/blob/master/assets/Screenshot_2020-04-07-06-52-01-92.jpg width=170 height=300 />
+<img src=https://github.com/gergirod/for_later/blob/master/assets/image_1.jpg height=300 />
+<img src=https://github.com/gergirod/for_later/blob/master/assets/image_2.jpg height=300 />
+<img src=https://github.com/gergirod/for_later/blob/master/assets/image_3.jpg height=300 />
+<img src=https://github.com/gergirod/for_later/blob/master/assets/image_4.jpg height=300 />
 
 ### Simple app that allows you to share any text link into it, categorize it and keep it locally for future reading.
 
