@@ -28,12 +28,17 @@ import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesBottomShee
 import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesSelectorAdapter
 import kotlinx.android.synthetic.main.main_fragment.*
 
-class ArticleListFragment(var articleLink: String) : Fragment(),
-    ArticleAdapter.RowClick {
+const val ARTICLE_LINK = "article_link"
+class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
 
+
+    private lateinit var articleLink : String
     companion object {
-        fun newInstance(articleLink: String) =
-            ArticleListFragment(articleLink)
+        fun newInstance(articleLink: String) = ArticleListFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARTICLE_LINK, articleLink)
+            }
+        }
     }
 
     private val categorySelectorAdapter : CategoriesSelectorAdapter by lazy {
@@ -70,6 +75,7 @@ class ArticleListFragment(var articleLink: String) : Fragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        articleLink = arguments!!.getString(ARTICLE_LINK, null)
         initViewModel()
         initList()
         populateListAndTitle(PreferencesManager.getInstance()!!.getLastCategorySelectedId())
