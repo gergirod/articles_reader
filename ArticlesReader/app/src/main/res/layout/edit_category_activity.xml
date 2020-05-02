@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:popupTheme="@style/AppCustomTheme"
-        app:titleTextColor="@color/row_line_color"
+        app:titleTextColor="@color/blue_dark"
         app:contentInsetStartWithNavigation="0dp"
         app:titleTextAppearance="@style/Toolbar.TitleText"/>
 
@@ -55,7 +55,7 @@
             android:layout_marginEnd="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="10dp"
-            android:backgroundTint="@color/row_background"
+            android:backgroundTint="@color/blue_dark"
             android:textColor="@color/white"
             android:textSize="12sp"/>
 

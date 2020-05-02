@@ -17,14 +17,14 @@ object RowUtils {
 
     fun getSecondaryBackgroun(isRead: Boolean, context: Context): ColorStateList? {
         return if (isRead) ContextCompat.getColorStateList(context, R.color.white)
-        else ContextCompat.getColorStateList(context, R.color.row_background)
+        else ContextCompat.getColorStateList(context, R.color.blue_dark)
     }
 
     fun getTextAndIconColors(isRead: Boolean, context: Context): Int {
         return if (isRead) ContextCompat.getColor(
             context,
             R.color.disable
-        ) else ContextCompat.getColor(context, R.color.row_background)
+        ) else ContextCompat.getColor(context, R.color.black_light)
     }
 
     fun getCheckIconColor(isRead: Boolean, context: Context): Int {

@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:popupTheme="@style/AppCustomTheme"
-        app:titleTextColor="@color/row_line_color"
+        app:titleTextColor="@color/blue_dark"
         app:contentInsetStartWithNavigation="0dp"
         app:titleTextAppearance="@style/Toolbar.TitleText"/>
 

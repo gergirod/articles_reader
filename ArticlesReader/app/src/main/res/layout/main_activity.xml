@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.main.MainActivity"
-    android:background="@color/row_line_color">
+    android:background="@color/backgorund_test">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".presentation.main.MainActivity"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="50dp"/>
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottom_bar"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             app:layout_anchor="@id/bottom_bar"
             android:src="@drawable/ic_edit"
-            app:backgroundTint="@color/row_background"
+            app:backgroundTint="@color/backgorund_test"
             app:tint="@color/white"
             app:elevation="6dp"
             app:borderWidth="0dp"

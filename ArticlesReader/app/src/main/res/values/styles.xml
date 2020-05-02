@@ -5,19 +5,19 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/blue_dark</item>
     </style>
 
 
     <style name="AppCustomTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/row_background</item>
-        <item name="colorPrimaryDark">@color/row_line_color</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary">@color/row_background</item>
+        <item name="colorPrimary">@color/backgorund_test</item>
+        <item name="colorPrimaryDark">@color/backgorund_test</item>
+        <item name="colorAccent">@color/backgorund_test</item>
+        <item name="android:textColorPrimary">@color/blue_dark</item>
         <item name="android:navigationBarColor">@color/white</item>
-        <item name="colorControlNormal">@color/row_background</item>
-        <item name="actionMenuTextColor">@color/row_background</item>
+        <item name="colorControlNormal">@color/blue_dark</item>
+        <item name="actionMenuTextColor">@color/backgorund_test</item>
 
 
     </style>

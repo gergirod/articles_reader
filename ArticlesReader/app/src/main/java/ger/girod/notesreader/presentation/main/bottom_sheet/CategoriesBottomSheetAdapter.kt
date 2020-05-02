@@ -47,7 +47,7 @@ class CategoriesBottomSheetAdapter(val listener: CategoriesBottomSheetDialogFrag
             val categoryId = PreferencesManager.getInstance()!!.getLastCategorySelectedId()
 
             if(category.id == categoryId) {
-                view.backgroundTintList = view.context.resources.getColorStateList(R.color.row_background)
+                view.backgroundTintList = view.context.resources.getColorStateList(R.color.blue_dark)
                 view.category_name.setTextColor(view.context.resources.getColor(R.color.white))
             }
             view.category_name.text = category.name
