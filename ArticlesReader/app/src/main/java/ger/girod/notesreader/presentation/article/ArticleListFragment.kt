@@ -163,7 +163,8 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
     }
 
     override fun onOpenArticle(article: Article) {
-        activity!!.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(article.description)))
+        viewModel.testFirebase(article)
+        //activity!!.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(article.description)))
     }
 
     override fun onDeleteArticle(article: Article, position: Int) {

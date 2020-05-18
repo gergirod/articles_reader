@@ -1,6 +1,7 @@
 package ger.girod.notesreader
 
 import android.app.Application
+import com.google.firebase.FirebaseApp
 import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.data.providers.PreferencesManager
 import ger.girod.notesreader.domain.entities.Category

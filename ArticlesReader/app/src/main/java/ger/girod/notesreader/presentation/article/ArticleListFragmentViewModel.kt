@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import ger.girod.notesreader.data.model.CategoriesAndArticle
 import ger.girod.notesreader.data.model.ResultWrapper
 import ger.girod.notesreader.domain.entities.Article
@@ -12,6 +15,7 @@ import ger.girod.notesreader.domain.use_cases.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import java.util.*
@@ -32,6 +36,33 @@ class ArticleListFragmentViewModel(
     var savedArticleData: MutableLiveData<Unit> = MutableLiveData()
     var errorData: MutableLiveData<String> = MutableLiveData()
     var categoryData : MutableLiveData<Category> = MutableLiveData()
+
+    fun testFirebase(article: Article) {
+
+        viewModelScope.launch {
+            val db = Firebase.firestore
+
+            val saveArticle = hashMapOf(
+                "title" to article.title,
+                "description" to article.description
+            )
+
+           try{
+                val document  = db
+                    .collection("articles")
+                    .add(saveArticle)
+                    .await()
+
+               Log.e("mirar aca ","mirar aca ${document.id}")
+               Log.e("mirar aca ","mirar aca ${document.parent}")
+               Log.e("mirar aca ","mirar aca ${document.path}")
+
+
+            }catch (e : Exception){
+                Log.e("mrar aca ","mirar aca "+e.localizedMessage)
+            }
+        }
+    }
 
     fun getArticleFromIntent(link: String) {
         viewModelScope.launch {
