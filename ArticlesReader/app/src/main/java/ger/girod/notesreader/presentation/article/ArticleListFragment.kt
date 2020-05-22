@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.list.customListAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
@@ -25,6 +26,9 @@ import ger.girod.notesreader.presentation.MyViewModelFactory
 import ger.girod.notesreader.presentation.article.bottom_sheet.ArticleBottomSheetDialogFragment
 import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesSelectorAdapter
 import ger.girod.notesreader.utils.CategoryUtils
+import ger.girod.notesreader.presentation.category.CategoryActivity
+import ger.girod.notesreader.presentation.main.CREATE_ACTIVITY_REQUEST_CODE
+import kotlinx.android.synthetic.main.custom_dialog_layout.*
 import kotlinx.android.synthetic.main.main_fragment.*
 
 const val ARTICLE_LINK = "article_link"
@@ -152,6 +156,11 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSh
             message(null, categoriesAndArticle.article.title)
             //listItemsSingleChoice(items = myItems, initialSelection = 0)
             customListAdapter(categorySelectorAdapter)
+            customView(R.layout.custom_dialog_layout)
+            create_category_container.setOnClickListener {
+                goToCreateCategory(categoriesAndArticle.article)
+                dismiss()
+            }
             positiveButton(R.string.dialog_save) {
                 categoriesAndArticle.article.categoryId = categorySelectorAdapter.getCategoryIdByPosition()
                 viewModel.saveArticle(categoriesAndArticle.article)
@@ -162,11 +171,15 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSh
         }
     }
 
+    private fun goToCreateCategory(article: Article) {
+        activity?.startActivityForResult(CategoryActivity.getIntent(activity!!, article), CREATE_ACTIVITY_REQUEST_CODE)
+    }
+
     private fun getArticlesByCategoryId(categoryId : Long) {
         viewModel.getArticlesByCategory(categoryId)
     }
 
-    fun getCategory(categoryId: Long) {
+    private fun getCategory(categoryId: Long) {
         viewModel.getCategoryById(categoryId)
     }
 
