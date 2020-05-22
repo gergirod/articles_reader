@@ -15,7 +15,7 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "androidx.splash_illustration.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
     }
@@ -73,8 +73,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.splash_illustration.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.splash_illustration.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     testImplementation "androidx.room:room-testing:$room_version"
 }
