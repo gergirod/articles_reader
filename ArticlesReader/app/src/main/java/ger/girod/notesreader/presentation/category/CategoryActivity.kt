@@ -12,18 +12,30 @@ import androidx.lifecycle.ViewModelProviders
 import ger.girod.notesreader.R
 import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.data.providers.PreferencesManager
+import ger.girod.notesreader.domain.entities.Article
 import ger.girod.notesreader.domain.entities.Category
+import ger.girod.notesreader.domain.use_cases.SaveArticleUseCaseImpl
 import ger.girod.notesreader.domain.use_cases.SaveCategoryUseCaseImpl
 import ger.girod.notesreader.presentation.MyViewModelFactory
 import kotlinx.android.synthetic.main.category_activity.*
 
+const val CATEGORY = "category"
 class CategoryActivity : AppCompatActivity() {
 
     companion object {
         fun getIntent(context: Context) : Intent {
             return Intent(context, CategoryActivity::class.java)
         }
+
+        fun getIntent(context: Context, article: Article) : Intent {
+            return Intent(context, CategoryActivity::class.java).apply {
+                putExtra(CATEGORY, article)
+            }
+        }
     }
+
+
+    private var article: Article? = null
 
     private lateinit var createCategoryViewModel: CreateCategoryViewModel
 
@@ -32,6 +44,8 @@ class CategoryActivity : AppCompatActivity() {
         setContentView(R.layout.category_activity)
 
         initViewModel()
+
+        article = intent.extras?.getParcelable(CATEGORY)
 
         createCategoryViewModel.saveCategoryData.observe(this, Observer {
             createCategoryViewModel.saveLatestCategory(it)
@@ -50,7 +64,7 @@ class CategoryActivity : AppCompatActivity() {
     private fun initViewModel() {
         val appDataBase = AppDataBase.getDatabaseInstance()
         createCategoryViewModel = ViewModelProviders.of(this, MyViewModelFactory{
-            CreateCategoryViewModel(SaveCategoryUseCaseImpl(appDataBase!!))
+            CreateCategoryViewModel(SaveCategoryUseCaseImpl(appDataBase!!), SaveArticleUseCaseImpl(appDataBase))
         })[CreateCategoryViewModel::class.java]
 
     }
@@ -74,7 +88,8 @@ class CategoryActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item!!.itemId) {
             R.id.action_save -> {
-                createCategoryViewModel.saveCategory(createCategory(category_name.text.toString()))
+                createCategoryViewModel.saveCategory(createCategory(category_name.text.toString()),
+                    article)
             }
             android.R.id.home -> {
                 onBackPressed()

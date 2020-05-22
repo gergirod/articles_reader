@@ -38,6 +38,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:hint="@string/enter_category_title"
             android:background="@android:color/transparent"
+            android:textColor="@color/black"
             android:layout_margin="16dp"
             android:inputType="textCapSentences"
             android:textSize="14sp"/>
