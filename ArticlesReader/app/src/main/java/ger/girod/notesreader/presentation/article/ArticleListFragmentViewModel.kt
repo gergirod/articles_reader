@@ -1,6 +1,5 @@
 package ger.girod.notesreader.presentation.article
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,6 @@ import ger.girod.notesreader.domain.entities.Article
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
@@ -22,7 +20,8 @@ class ArticleListFragmentViewModel(
     private val deleteArticleUseCase: DeleteArticleUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getArticlesByCategoryUseCase: GetArticlesByCategoryUseCase,
-    private val getCategoryUseCase: GetCategoryUseCase) : ViewModel() {
+    private val getCategoryUseCase: GetCategoryUseCase,
+    private val changeArtitleCategoryUseCase: ChangeArtitleCategoryUseCase) : ViewModel() {
 
 
     var categoriesAndArticleData: MutableLiveData<CategoriesAndArticle> = MutableLiveData()
@@ -32,6 +31,10 @@ class ArticleListFragmentViewModel(
     var savedArticleData: MutableLiveData<Unit> = MutableLiveData()
     var errorData: MutableLiveData<String> = MutableLiveData()
     var categoryData : MutableLiveData<Category> = MutableLiveData()
+    var categoriesMoveData : MutableLiveData<List<Category>> = MutableLiveData()
+    var changeCategorySuccessData : MutableLiveData<Article> = MutableLiveData()
+
+    private lateinit var categoriesList : List<Category>
 
     fun getArticleFromIntent(link: String) {
         viewModelScope.launch {
@@ -80,7 +83,7 @@ class ArticleListFragmentViewModel(
         viewModelScope.launch {
             when (val response = deleteArticleUseCase.deleteArticle(article)) {
                 is ResultWrapper.Success -> deleteArticlesData.value = position
-                is ResultWrapper.Error -> response.exception.message
+                is ResultWrapper.Error -> errorData.postValue(response.exception.message)
             }
         }
     }
@@ -90,8 +93,36 @@ class ArticleListFragmentViewModel(
         viewModelScope.launch {
             when (val response = markArticleAsReadUseCase.markArticleAsRead(article)) {
                 is ResultWrapper.Success -> updateArticleData.value = position
-                is ResultWrapper.Error -> response.exception.message
+                is ResultWrapper.Error -> errorData.postValue(response.exception.message)
             }
+        }
+    }
+
+    fun getCategoriesToMoveOption(article: Article) {
+
+        viewModelScope.launch {
+            when(val  response = getCategoriesUseCase.getCategories()) {
+                is ResultWrapper.Success -> {
+                    categoriesMoveData.postValue(response.value)
+                }
+                is ResultWrapper.Error -> errorData.postValue(response.exception.message)
+            }
+        }
+
+    }
+
+    fun changeArticleCategory(article: Article, position: Int) {
+        viewModelScope.launch {
+
+            when(val response = changeArtitleCategoryUseCase.changeArticleCategory(article)) {
+                is ResultWrapper.Success -> {
+                    changeCategorySuccessData.value = article
+                    deleteArticlesData.value = position
+                }
+                is ResultWrapper.Error -> errorData.postValue(response.exception.message)
+            }
+
+
         }
     }
 

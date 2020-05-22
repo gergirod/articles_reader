@@ -50,7 +50,7 @@ class CategoriesSelectorAdapter() : RecyclerView.Adapter<CategoriesSelectorAdapt
 
     }
 
-    public fun getCategoryIdByPosition() : Long {
+    fun getCategoryIdByPosition() : Long {
         return categorieList[lastcheckedPosition].id
     }
 }

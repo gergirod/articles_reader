@@ -3,7 +3,6 @@ package ger.girod.notesreader.presentation.article
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.list.customListAdapter
-import com.afollestad.materialdialogs.list.listItems
-import com.afollestad.materialdialogs.list.listItemsSingleChoice
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import ger.girod.notesreader.R
 import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.data.model.CategoriesAndArticle
@@ -24,19 +23,22 @@ import ger.girod.notesreader.domain.entities.Article
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.*
 import ger.girod.notesreader.presentation.MyViewModelFactory
+import ger.girod.notesreader.presentation.article.bottom_sheet.ArticleBottomSheetDialogFragment
+import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesSelectorAdapter
+import ger.girod.notesreader.utils.CategoryUtils
 import ger.girod.notesreader.presentation.category.CategoryActivity
 import ger.girod.notesreader.presentation.main.CREATE_ACTIVITY_REQUEST_CODE
-import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesBottomSheetAdapter
-import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesBottomSheetDialogFragment
-import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesSelectorAdapter
 import kotlinx.android.synthetic.main.custom_dialog_layout.*
 import kotlinx.android.synthetic.main.main_fragment.*
 
 const val ARTICLE_LINK = "article_link"
-class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
-
+class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSheetDialogFragment.Listener {
 
     private lateinit var articleLink : String
+    private lateinit var fragmentDialog : BottomSheetDialogFragment
+    private lateinit var article: Article
+    private  var position: Int = -1
+    private lateinit var listener: Listener
     companion object {
         fun newInstance(articleLink: String) = ArticleListFragment().apply {
             arguments = Bundle().apply {
@@ -56,6 +58,10 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
         )
     }
 
+    fun setListener(listener: Listener ) {
+        this.listener = listener
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,7 +78,8 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
                 DeleteArticleUseCaseImpl(appDataBase),
                 GetCategoriesUseCaseImpl(appDataBase),
                 GetArticlesByCategoryUseCaseImpl(appDataBase),
-                GetCategoryUseCaseImpl(appDataBase)
+                GetCategoryUseCaseImpl(appDataBase),
+                ChangeArtitleCategoryUseCaseImpl(appDataBase)
             )
         })[ArticleListFragmentViewModel::class.java]
     }
@@ -96,7 +103,7 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
         })
 
         viewModel.errorData.observe(this, Observer {
-            //Todo show error message
+            Snackbar.make(main, it, Snackbar.LENGTH_LONG).show()
         })
 
         viewModel.articlesData.observe(this, Observer { t ->
@@ -121,6 +128,14 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
 
         viewModel.categoryData.observe(this, Observer {
             category_title.text = it.name
+        })
+
+        viewModel.categoriesMoveData.observe(this, Observer {
+            populateChangeCategoryDialog(it)
+        })
+
+        viewModel.changeCategorySuccessData.observe(this , Observer {
+            listener.onChangeCategory(it)
         })
     }
 
@@ -180,15 +195,13 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
     }
 
     override fun onDeleteArticle(article: Article, position: Int) {
-        MaterialDialog(context!!).show {
-            title(R.string.dialog_title_remove)
-            positiveButton(R.string.dialog_remove) {
-                viewModel.deleteArticle(article, position)
-            }
-            negativeButton(R.string.dialog_cancel) {
-                this.cancel()
-            }
-        }
+        fragmentDialog =
+            ArticleBottomSheetDialogFragment(
+                article,
+                position,
+                this
+            )
+        fragmentDialog.show(fragmentManager!!, fragmentDialog.tag)
     }
 
     override fun onMarkAsRead(article: Article, position: Int) {
@@ -201,6 +214,50 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick {
                 this.cancel()
             }
         }
+    }
+
+    override fun onRemoveArticle(article: Article, position: Int) {
+        MaterialDialog(context!!).show {
+            title(R.string.dialog_title_remove)
+            positiveButton(R.string.dialog_remove) {
+                fragmentDialog.dismiss()
+                viewModel.deleteArticle(article, position)
+            }
+            negativeButton(R.string.dialog_cancel) {
+                fragmentDialog.dismiss()
+                this.cancel()
+            }
+        }
+    }
+
+    private fun populateChangeCategoryDialog(categories : List<Category>) {
+        categorySelectorAdapter.lastcheckedPosition = CategoryUtils.getCategoryPositionInList(article, categories)
+        categorySelectorAdapter.setList(categories as ArrayList<Category>)
+        MaterialDialog(context!!).show {
+            cancelOnTouchOutside(false)
+            title(R.string.move_to)
+            customListAdapter(categorySelectorAdapter)
+            positiveButton(R.string.move) {
+                article.categoryId = categorySelectorAdapter.getCategoryIdByPosition()
+                viewModel.changeArticleCategory(article, position)
+                fragmentDialog.dismiss()
+            }
+            negativeButton(R.string.dialog_cancel) {
+                this.cancel()
+            }
+        }
+    }
+
+    override fun onMoveToArticle(article: Article, position: Int) {
+        this.position = position
+        this.article = article
+        viewModel.getCategoriesToMoveOption(article)
+    }
+
+    interface Listener {
+
+        fun onChangeCategory(article: Article)
+
     }
 
 }

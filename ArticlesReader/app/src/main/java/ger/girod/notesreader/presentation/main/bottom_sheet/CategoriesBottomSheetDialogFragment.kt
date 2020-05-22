@@ -73,7 +73,6 @@ class CategoriesBottomSheetDialogFragment(val  listener: Listener) : BottomSheet
     }
 
     interface Listener {
-
         fun createNewCategory()
 
         fun showCategory(category: Category)
