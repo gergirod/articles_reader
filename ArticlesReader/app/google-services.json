@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "724560167522",
+    "firebase_url": "https://for-later-2b422.firebaseio.com",
+    "project_id": "for-later-2b422",
+    "storage_bucket": "for-later-2b422.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724560167522:android:a14dbdbc96836b28bfc73b",
+        "android_client_info": {
+          "package_name": "ger.girod.forlater"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724560167522-k7dcop1lesd621fa9rcb83f9vs0m4a93.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu7ju2iF5jmVixzOdFnBW-6CQEJv7otwA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724560167522-k7dcop1lesd621fa9rcb83f9vs0m4a93.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
