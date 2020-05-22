@@ -22,7 +22,7 @@ import ger.girod.notesreader.data.providers.PreferencesManager
 import ger.girod.notesreader.domain.entities.Article
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.*
-import ger.girod.notesreader.presentation.MyViewModelFactory
+import ger.girod.notesreader.presentation.utils.MyViewModelFactory
 import ger.girod.notesreader.presentation.article.bottom_sheet.ArticleBottomSheetDialogFragment
 import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesSelectorAdapter
 import ger.girod.notesreader.utils.CategoryUtils
@@ -71,17 +71,18 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSh
 
     private fun initViewModel() {
         val appDataBase = AppDataBase.getDatabaseInstance()
-        viewModel = ViewModelProviders.of(this, MyViewModelFactory {
-            ArticleListFragmentViewModel(
-                 SaveArticleUseCaseImpl(appDataBase!!),
-                MarkArticleAsReadUseCaseImpl(appDataBase),
-                DeleteArticleUseCaseImpl(appDataBase),
-                GetCategoriesUseCaseImpl(appDataBase),
-                GetArticlesByCategoryUseCaseImpl(appDataBase),
-                GetCategoryUseCaseImpl(appDataBase),
-                ChangeArtitleCategoryUseCaseImpl(appDataBase)
-            )
-        })[ArticleListFragmentViewModel::class.java]
+        viewModel = ViewModelProviders.of(this,
+            MyViewModelFactory {
+                ArticleListFragmentViewModel(
+                    SaveArticleUseCaseImpl(appDataBase!!),
+                    MarkArticleAsReadUseCaseImpl(appDataBase),
+                    DeleteArticleUseCaseImpl(appDataBase),
+                    GetCategoriesUseCaseImpl(appDataBase),
+                    GetArticlesByCategoryUseCaseImpl(appDataBase),
+                    GetCategoryUseCaseImpl(appDataBase),
+                    ChangeArtitleCategoryUseCaseImpl(appDataBase)
+                )
+            })[ArticleListFragmentViewModel::class.java]
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

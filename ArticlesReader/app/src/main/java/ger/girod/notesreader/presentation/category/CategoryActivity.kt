@@ -11,12 +11,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import ger.girod.notesreader.R
 import ger.girod.notesreader.data.database.AppDataBase
-import ger.girod.notesreader.data.providers.PreferencesManager
 import ger.girod.notesreader.domain.entities.Article
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.SaveArticleUseCaseImpl
 import ger.girod.notesreader.domain.use_cases.SaveCategoryUseCaseImpl
-import ger.girod.notesreader.presentation.MyViewModelFactory
+import ger.girod.notesreader.presentation.utils.MyViewModelFactory
 import kotlinx.android.synthetic.main.category_activity.*
 
 const val CATEGORY = "category"
@@ -63,9 +62,13 @@ class CategoryActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         val appDataBase = AppDataBase.getDatabaseInstance()
-        createCategoryViewModel = ViewModelProviders.of(this, MyViewModelFactory{
-            CreateCategoryViewModel(SaveCategoryUseCaseImpl(appDataBase!!), SaveArticleUseCaseImpl(appDataBase))
-        })[CreateCategoryViewModel::class.java]
+        createCategoryViewModel = ViewModelProviders.of(this,
+            MyViewModelFactory {
+                CreateCategoryViewModel(
+                    SaveCategoryUseCaseImpl(appDataBase!!),
+                    SaveArticleUseCaseImpl(appDataBase)
+                )
+            })[CreateCategoryViewModel::class.java]
 
     }
 

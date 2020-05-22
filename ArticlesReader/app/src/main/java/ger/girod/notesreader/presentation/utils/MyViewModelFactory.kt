@@ -1,4 +1,4 @@
-package ger.girod.notesreader.presentation
+package ger.girod.notesreader.presentation.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

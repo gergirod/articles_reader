@@ -13,7 +13,7 @@ import ger.girod.notesreader.R
 import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.*
-import ger.girod.notesreader.presentation.MyViewModelFactory
+import ger.girod.notesreader.presentation.utils.MyViewModelFactory
 import kotlinx.android.synthetic.main.category_activity.category_name
 import kotlinx.android.synthetic.main.category_activity.toolbar
 import kotlinx.android.synthetic.main.edit_category_activity.*
@@ -71,10 +71,15 @@ class EditCategoryActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         val appDataBase = AppDataBase.getDatabaseInstance()
-        editCategoryViewModel = ViewModelProviders.of(this, MyViewModelFactory{
-            EditCategoryViewModel(DeleteCategoryUseCaseImpl(appDataBase!!), UpdateCategoryUseCaseImpl(appDataBase),
-                GetCategoryUseCaseImpl(appDataBase), GetRadomCategoryUseCaseImpl(appDataBase))
-        })[EditCategoryViewModel::class.java]
+        editCategoryViewModel = ViewModelProviders.of(this,
+            MyViewModelFactory {
+                EditCategoryViewModel(
+                    DeleteCategoryUseCaseImpl(appDataBase!!),
+                    UpdateCategoryUseCaseImpl(appDataBase),
+                    GetCategoryUseCaseImpl(appDataBase),
+                    GetRadomCategoryUseCaseImpl(appDataBase)
+                )
+            })[EditCategoryViewModel::class.java]
 
     }
 

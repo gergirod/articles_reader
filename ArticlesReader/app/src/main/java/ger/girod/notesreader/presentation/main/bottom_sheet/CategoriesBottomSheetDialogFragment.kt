@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.*
-import ger.girod.notesreader.presentation.MyViewModelFactory
+import ger.girod.notesreader.presentation.utils.MyViewModelFactory
 import kotlinx.android.synthetic.main.bottom_dialog_fragment.*
 import kotlin.collections.ArrayList
 
@@ -31,11 +31,12 @@ class CategoriesBottomSheetDialogFragment(val  listener: Listener) : BottomSheet
 
     private fun initViewModel() {
         val appDataBase = AppDataBase.getDatabaseInstance()
-        bottomSheetViewModel = ViewModelProviders.of(this, MyViewModelFactory {
-            BottomSheetViewModel(
-                GetCategoriesUseCaseImpl(appDataBase!!)
-            )
-        })[BottomSheetViewModel::class.java]
+        bottomSheetViewModel = ViewModelProviders.of(this,
+            MyViewModelFactory {
+                BottomSheetViewModel(
+                    GetCategoriesUseCaseImpl(appDataBase!!)
+                )
+            })[BottomSheetViewModel::class.java]
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
