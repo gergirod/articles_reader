@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentation.article.ArticleListFragment"
-    android:background="@drawable/main_container_round_background">
+    android:background="@drawable/main_container_round_background"
+    android:paddingBottom="20dp">
 
     <TextView
         android:id="@+id/category_title"

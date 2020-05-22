@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             app:layout_constraintStart_toStartOf="parent"
-            android:textColor="@color/grey"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             android:hint="@string/enter_category_title"
             android:background="@android:color/transparent"
