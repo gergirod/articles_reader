@@ -13,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
 import ger.girod.notesreader.R
 import ger.girod.notesreader.data.providers.PreferencesManager
+import ger.girod.notesreader.domain.entities.Article
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.presentation.article.ArticleListFragment
 import ger.girod.notesreader.presentation.category.CATEGORY_DELETED
@@ -26,7 +27,7 @@ const val CREATE_ACTIVITY_REQUEST_CODE : Int = 1
 const val EDIT_ACTIVITY_REQUEST_CODE : Int = 2
 
 
-class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Listener{
+class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Listener , ArticleListFragment.Listener{
 
     private var intentString: String = ""
     private lateinit var fragmentDialog : BottomSheetDialogFragment
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Li
 
         if (savedInstanceState == null) {
             articleListFragment = ArticleListFragment.newInstance(intentString)
+            articleListFragment.setListener(this)
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, articleListFragment)
                 .commitNow()
@@ -90,6 +92,12 @@ class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Li
         fragmentDialog.dismiss()
         articleListFragment.populateListAndTitle(category.id)
 
+    }
+
+    override fun onChangeCategory(article: Article) {
+        val categoryId = article.categoryId
+        PreferencesManager.getInstance()!!.saveLastCategorySelectedId(categoryId)
+        articleListFragment.populateListAndTitle(categoryId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
