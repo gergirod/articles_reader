@@ -8,15 +8,12 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import ger.girod.notesreader.R
-import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.domain.entities.Category
-import ger.girod.notesreader.domain.use_cases.*
-import ger.girod.notesreader.presentation.utils.MyViewModelFactory
 import kotlinx.android.synthetic.main.category_activity.category_name
 import kotlinx.android.synthetic.main.category_activity.toolbar
 import kotlinx.android.synthetic.main.edit_category_activity.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val CATEGORY_ID = "category_id"
 const val CATEGORY_DELETED = "category_deleted"
@@ -30,14 +27,12 @@ class EditCategoryActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var editCategoryViewModel: EditCategoryViewModel
+    private val editCategoryViewModel: EditCategoryViewModel by viewModel()
     private lateinit var category: Category
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.edit_category_activity)
-
-        initViewModel()
 
         editCategoryViewModel.getCategory(intent.getLongExtra(CATEGORY_ID, 0))
 
@@ -67,20 +62,6 @@ class EditCategoryActivity : AppCompatActivity() {
             setDisplayShowHomeEnabled(true)
             setTitle(R.string.edit_category)
         }
-    }
-
-    private fun initViewModel() {
-        val appDataBase = AppDataBase.getDatabaseInstance()
-        editCategoryViewModel = ViewModelProviders.of(this,
-            MyViewModelFactory {
-                EditCategoryViewModel(
-                    DeleteCategoryUseCaseImpl(appDataBase!!),
-                    UpdateCategoryUseCaseImpl(appDataBase),
-                    GetCategoryUseCaseImpl(appDataBase),
-                    GetRadomCategoryUseCaseImpl(appDataBase)
-                )
-            })[EditCategoryViewModel::class.java]
-
     }
 
     private fun setResultIntent(categoryId : Long, isCategoryDeleted : Boolean) : Intent {

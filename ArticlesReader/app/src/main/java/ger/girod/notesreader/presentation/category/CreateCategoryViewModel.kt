@@ -11,15 +11,18 @@ import ger.girod.notesreader.domain.use_cases.SaveArticleUseCase
 import ger.girod.notesreader.domain.use_cases.SaveCategoryUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class CreateCategoryViewModel(private val saveCategoryUseCase: SaveCategoryUseCase,
-                              private val saveArticleUseCase: SaveArticleUseCase) : ViewModel() {
+                              private val saveArticleUseCase: SaveArticleUseCase) : ViewModel() , KoinComponent {
 
     var saveCategoryData : MutableLiveData<Long> = MutableLiveData()
     var errorData : MutableLiveData<String> = MutableLiveData()
+    private val preferenceManager : PreferencesManager by inject()
 
     fun saveLatestCategory(id : Long) {
-        PreferencesManager.getInstance()!!.saveLastCategorySelectedId(id)
+        preferenceManager.saveLastCategorySelectedId(id)
     }
 
     fun saveCategory(category : Category, article: Article?) {

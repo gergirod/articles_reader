@@ -9,16 +9,19 @@ import ger.girod.notesreader.data.providers.PreferencesManager
 import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.domain.use_cases.*
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class EditCategoryViewModel(private val deleteCategoryUseCase: DeleteCategoryUseCase,
                             private val updateCategoryUseCase: UpdateCategoryUseCase,
                             private val getCategoryUseCase: GetCategoryUseCase,
-                            private val getRandomCategoryUseCase: GetRandomCategoryUseCase) : ViewModel() {
+                            private val getRandomCategoryUseCase: GetRandomCategoryUseCase) : ViewModel(), KoinComponent {
 
     var categoryData : MutableLiveData<Category> = MutableLiveData()
     var deleteCategoryData : MutableLiveData<Long> = MutableLiveData()
     var updateCategoryData : MutableLiveData<Unit> = MutableLiveData()
     var errorData : MutableLiveData<String> = MutableLiveData()
+    private val preferenceManager : PreferencesManager by inject()
 
     private suspend fun getRandomCategory() {
 
@@ -40,7 +43,7 @@ class EditCategoryViewModel(private val deleteCategoryUseCase: DeleteCategoryUse
     }
 
     fun saveLatestCategory(id : Long) {
-        PreferencesManager.getInstance()!!.saveLastCategorySelectedId(id)
+        preferenceManager.saveLastCategorySelectedId(id)
     }
 
 

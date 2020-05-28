@@ -8,18 +8,20 @@ import ger.girod.notesreader.domain.entities.Category
 import ger.girod.notesreader.R
 import ger.girod.notesreader.data.providers.PreferencesManager
 import kotlinx.android.synthetic.main.category_bottom_sheet_row.view.*
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 
-class CategoriesBottomSheetAdapter(val listener: CategoriesBottomSheetDialogFragment.Listener) : RecyclerView.Adapter<CategoriesBottomSheetAdapter.CategoryItemRow>() {
+class CategoriesBottomSheetAdapter(val listener: CategoriesBottomSheetDialogFragment.Listener)
+    : RecyclerView.Adapter<CategoriesBottomSheetAdapter.CategoryItemRow>(), KoinComponent {
 
     private var categorieList : ArrayList<Category> = ArrayList<Category>()
+    private val preferencesManager : PreferencesManager by  inject()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryItemRow {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.category_bottom_sheet_row,
             parent, false)
-        return CategoryItemRow(
-            view
-        )
+        return CategoryItemRow(view, preferencesManager)
     }
 
     override fun getItemCount(): Int {
@@ -41,10 +43,10 @@ class CategoriesBottomSheetAdapter(val listener: CategoriesBottomSheetDialogFrag
     }
 
 
-    class CategoryItemRow(val view : View) : RecyclerView.ViewHolder(view){
+    class CategoryItemRow(val view : View , private val preferencesManager: PreferencesManager) : RecyclerView.ViewHolder(view){
 
         fun populateContent(category: Category) {
-            val categoryId = PreferencesManager.getInstance()!!.getLastCategorySelectedId()
+            val categoryId = preferencesManager.getLastCategorySelectedId()
 
             if(category.id == categoryId) {
                 view.backgroundTintList = view.context.resources.getColorStateList(R.color.blue_dark)

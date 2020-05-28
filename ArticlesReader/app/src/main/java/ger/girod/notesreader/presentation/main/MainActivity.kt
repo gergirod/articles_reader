@@ -22,17 +22,21 @@ import ger.girod.notesreader.presentation.category.CategoryActivity
 import ger.girod.notesreader.presentation.category.EditCategoryActivity
 import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesBottomSheetDialogFragment
 import kotlinx.android.synthetic.main.main_activity.*
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 const val CREATE_ACTIVITY_REQUEST_CODE : Int = 1
 const val EDIT_ACTIVITY_REQUEST_CODE : Int = 2
 
 
-class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Listener , ArticleListFragment.Listener{
+class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Listener ,
+    ArticleListFragment.Listener, KoinComponent{
 
     private var intentString: String = ""
     private lateinit var fragmentDialog : BottomSheetDialogFragment
     private lateinit var articleListFragment : ArticleListFragment
     private lateinit var category: Category
+    private val preferenceManager : PreferencesManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +61,7 @@ class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Li
 
         fab.setOnClickListener {
             startActivityForResult(EditCategoryActivity.getIntent(this,
-                PreferencesManager.getInstance()!!.getLastCategorySelectedId()), EDIT_ACTIVITY_REQUEST_CODE)
+                preferenceManager.getLastCategorySelectedId()), EDIT_ACTIVITY_REQUEST_CODE)
         }
     }
 
@@ -88,7 +92,7 @@ class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Li
 
     override fun showCategory(category: Category) {
         this.category = category
-        PreferencesManager.getInstance()!!.saveLastCategorySelectedId(category.id)
+        preferenceManager.saveLastCategorySelectedId(category.id)
         fragmentDialog.dismiss()
         articleListFragment.populateListAndTitle(category.id)
 
@@ -96,7 +100,7 @@ class MainActivity : AppCompatActivity(), CategoriesBottomSheetDialogFragment.Li
 
     override fun onChangeCategory(article: Article) {
         val categoryId = article.categoryId
-        PreferencesManager.getInstance()!!.saveLastCategorySelectedId(categoryId)
+        preferenceManager.saveLastCategorySelectedId(categoryId)
         articleListFragment.populateListAndTitle(categoryId)
     }
 

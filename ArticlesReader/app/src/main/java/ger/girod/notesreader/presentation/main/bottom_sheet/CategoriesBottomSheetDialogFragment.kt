@@ -5,50 +5,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ger.girod.notesreader.R
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.domain.entities.Category
-import ger.girod.notesreader.domain.use_cases.*
-import ger.girod.notesreader.presentation.utils.MyViewModelFactory
 import kotlinx.android.synthetic.main.bottom_dialog_fragment.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.ArrayList
 
 class CategoriesBottomSheetDialogFragment(val  listener: Listener) : BottomSheetDialogFragment() {
 
     private lateinit var viewManager : RecyclerView.LayoutManager
     private lateinit var categoriesBottomSheetAdapter: CategoriesBottomSheetAdapter
-    private lateinit var bottomSheetViewModel: BottomSheetViewModel
+    private val bottomSheetViewModel: BottomSheetViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bottom_dialog_fragment, container, false)
     }
 
-    private fun initViewModel() {
-        val appDataBase = AppDataBase.getDatabaseInstance()
-        bottomSheetViewModel = ViewModelProviders.of(this,
-            MyViewModelFactory {
-                BottomSheetViewModel(
-                    GetCategoriesUseCaseImpl(appDataBase!!)
-                )
-            })[BottomSheetViewModel::class.java]
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewModel()
         setupList()
 
         bottomSheetViewModel.getCategoryList()
-        bottomSheetViewModel.categoriesData.observe(this, Observer {
+        bottomSheetViewModel.categoriesData.observe(viewLifecycleOwner, Observer {
             categoriesBottomSheetAdapter.setList(it as ArrayList<Category>)
         })
-        bottomSheetViewModel.errorData.observe(this, Observer {
+        bottomSheetViewModel.errorData.observe(viewLifecycleOwner, Observer {
 
         })
 
