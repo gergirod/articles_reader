@@ -8,15 +8,11 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import ger.girod.notesreader.R
-import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.domain.entities.Article
 import ger.girod.notesreader.domain.entities.Category
-import ger.girod.notesreader.domain.use_cases.SaveArticleUseCaseImpl
-import ger.girod.notesreader.domain.use_cases.SaveCategoryUseCaseImpl
-import ger.girod.notesreader.presentation.utils.MyViewModelFactory
 import kotlinx.android.synthetic.main.category_activity.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val CATEGORY = "category"
 class CategoryActivity : AppCompatActivity() {
@@ -36,13 +32,11 @@ class CategoryActivity : AppCompatActivity() {
 
     private var article: Article? = null
 
-    private lateinit var createCategoryViewModel: CreateCategoryViewModel
+    private val createCategoryViewModel: CreateCategoryViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.category_activity)
-
-        initViewModel()
 
         article = intent.extras?.getParcelable(CATEGORY)
 
@@ -58,18 +52,6 @@ class CategoryActivity : AppCompatActivity() {
             setDisplayShowHomeEnabled(true)
             setTitle(R.string.create_category)
         }
-    }
-
-    private fun initViewModel() {
-        val appDataBase = AppDataBase.getDatabaseInstance()
-        createCategoryViewModel = ViewModelProviders.of(this,
-            MyViewModelFactory {
-                CreateCategoryViewModel(
-                    SaveCategoryUseCaseImpl(appDataBase!!),
-                    SaveArticleUseCaseImpl(appDataBase)
-                )
-            })[CreateCategoryViewModel::class.java]
-
     }
 
     private fun createCategory(title : String) : Category {

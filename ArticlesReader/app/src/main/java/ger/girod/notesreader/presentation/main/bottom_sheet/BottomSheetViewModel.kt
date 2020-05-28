@@ -22,9 +22,4 @@ class BottomSheetViewModel(private val getCategoriesUseCase: GetCategoriesUseCas
             }
         }
     }
-
-
-    override fun onCleared() {
-        super.onCleared()
-    }
 }

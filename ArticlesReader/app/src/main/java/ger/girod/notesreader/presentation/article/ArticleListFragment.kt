@@ -3,12 +3,12 @@ package ger.girod.notesreader.presentation.article
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
@@ -16,13 +16,10 @@ import com.afollestad.materialdialogs.list.customListAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import ger.girod.notesreader.R
-import ger.girod.notesreader.data.database.AppDataBase
 import ger.girod.notesreader.data.model.CategoriesAndArticle
 import ger.girod.notesreader.data.providers.PreferencesManager
 import ger.girod.notesreader.domain.entities.Article
 import ger.girod.notesreader.domain.entities.Category
-import ger.girod.notesreader.domain.use_cases.*
-import ger.girod.notesreader.presentation.utils.MyViewModelFactory
 import ger.girod.notesreader.presentation.article.bottom_sheet.ArticleBottomSheetDialogFragment
 import ger.girod.notesreader.presentation.main.bottom_sheet.CategoriesSelectorAdapter
 import ger.girod.notesreader.utils.CategoryUtils
@@ -30,9 +27,13 @@ import ger.girod.notesreader.presentation.category.CategoryActivity
 import ger.girod.notesreader.presentation.main.CREATE_ACTIVITY_REQUEST_CODE
 import kotlinx.android.synthetic.main.custom_dialog_layout.*
 import kotlinx.android.synthetic.main.main_fragment.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 const val ARTICLE_LINK = "article_link"
-class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSheetDialogFragment.Listener {
+class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSheetDialogFragment.Listener,
+    KoinComponent{
 
     private lateinit var articleLink : String
     private lateinit var fragmentDialog : BottomSheetDialogFragment
@@ -47,11 +48,13 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSh
         }
     }
 
+    private val preferenceManager : PreferencesManager by  inject()
+
     private val categorySelectorAdapter : CategoriesSelectorAdapter by lazy {
         CategoriesSelectorAdapter()
     }
 
-    private lateinit var viewModel: ArticleListFragmentViewModel
+    private val viewModel: ArticleListFragmentViewModel by viewModel()
     private val adapter: ArticleAdapter by lazy {
         ArticleAdapter(
             this
@@ -69,32 +72,16 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSh
         return inflater.inflate(R.layout.main_fragment, container, false)
     }
 
-    private fun initViewModel() {
-        val appDataBase = AppDataBase.getDatabaseInstance()
-        viewModel = ViewModelProviders.of(this,
-            MyViewModelFactory {
-                ArticleListFragmentViewModel(
-                    SaveArticleUseCaseImpl(appDataBase!!),
-                    MarkArticleAsReadUseCaseImpl(appDataBase),
-                    DeleteArticleUseCaseImpl(appDataBase),
-                    GetCategoriesUseCaseImpl(appDataBase),
-                    GetArticlesByCategoryUseCaseImpl(appDataBase),
-                    GetCategoryUseCaseImpl(appDataBase),
-                    ChangeArtitleCategoryUseCaseImpl(appDataBase)
-                )
-            })[ArticleListFragmentViewModel::class.java]
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         articleLink = arguments!!.getString(ARTICLE_LINK, null)
-        initViewModel()
         initList()
-        populateListAndTitle(PreferencesManager.getInstance()!!.getLastCategorySelectedId())
+        Log.e("mirar aca ","mirar aca "+preferenceManager.getLastCategorySelectedId())
+        populateListAndTitle(preferenceManager.getLastCategorySelectedId())
 
         if (articleLink.isNotEmpty()) viewModel.getArticleFromIntent(articleLink)
 
-        viewModel.categoriesAndArticleData.observe(this, Observer { t ->
+        viewModel.categoriesAndArticleData.observe(viewLifecycleOwner, Observer { t ->
             if (t != null) {
                 context?.let {
                     populateDialog(t)
@@ -103,39 +90,39 @@ class ArticleListFragment : Fragment(), ArticleAdapter.RowClick, ArticleBottomSh
             }
         })
 
-        viewModel.errorData.observe(this, Observer {
+        viewModel.errorData.observe(viewLifecycleOwner, Observer {
             Snackbar.make(main, it, Snackbar.LENGTH_LONG).show()
         })
 
-        viewModel.articlesData.observe(this, Observer { t ->
+        viewModel.articlesData.observe(viewLifecycleOwner, Observer { t ->
             if (t != null) {
                 adapter.setList(t)
             }
         })
 
-        viewModel.savedArticleData.observe(this, Observer { t ->
+        viewModel.savedArticleData.observe(viewLifecycleOwner, Observer { t ->
             if (t != null) {
-                getArticlesByCategoryId(PreferencesManager.getInstance()!!.getLastCategorySelectedId())
+                getArticlesByCategoryId(preferenceManager.getLastCategorySelectedId())
             }
         })
 
-        viewModel.deleteArticlesData.observe(this, Observer { t ->
+        viewModel.deleteArticlesData.observe(viewLifecycleOwner, Observer { t ->
             adapter.deleteArtitle(t)
         })
 
-        viewModel.updateArticleData.observe(this, Observer { t ->
+        viewModel.updateArticleData.observe(viewLifecycleOwner, Observer { t ->
             adapter.onMarkAsRead(t)
         })
 
-        viewModel.categoryData.observe(this, Observer {
+        viewModel.categoryData.observe(viewLifecycleOwner, Observer {
             category_title.text = it.name
         })
 
-        viewModel.categoriesMoveData.observe(this, Observer {
+        viewModel.categoriesMoveData.observe(viewLifecycleOwner, Observer {
             populateChangeCategoryDialog(it)
         })
 
-        viewModel.changeCategorySuccessData.observe(this , Observer {
+        viewModel.changeCategorySuccessData.observe(viewLifecycleOwner , Observer {
             listener.onChangeCategory(it)
         })
     }
